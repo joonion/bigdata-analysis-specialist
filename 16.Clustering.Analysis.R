@@ -6,8 +6,6 @@
 ## 10.1 Similarity Measures ##
 ##############################
 
-sink("Chap.10.txt")
-
 install.packages("flexclust")
 library(flexclust)
 data(nutrient)
@@ -158,4 +156,3 @@ mean(wine$Type==clustering.pam$clustering)
 library(flexclust)
 randIndex(result.pam)
 
-sink()
