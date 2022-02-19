@@ -1,0 +1,603 @@
+---
+title: <b>"5조 (달팽이조) 과제"</b>
+output: html_document
+contributor: '이은혜, 정희택, 김 송, 서석정'
+---
+
+# 조원: 이은혜, 정희택, 김 송, 서석정
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## <b><span style="color: red">문제 1</span>: 약수와 소수 구하기</b>
+
+### <b>1. n이 입력값으로 주어질 때 <span style="color: blue">약수의 개수</span>를 출력하는 함수를 완성하시오.</b>
+
+```{r}
+div_count <- function (n) return (sum(n %% (1:n)==0))
+
+div_count(100)
+div_count(24)
+div_count(6)
+```
+
+
+### <b>2. n이 입력값으로 주어질 때 <span style="color: blue">소수의 개수</span>를 출력하는 함수를 완성하시오.</b>
+
+```{r}
+prime_count <- function (n) return(sum(sapply(c(1:n), div_count)==2))
+
+prime_count(10)
+prime_count(100)
+prime_count(1000)
+```
+
+## <b><span style="color: red">문제 2</span>: mtcars 데이터셋</b>
+### <b>1. <span style="color: blue">mtcars</span> 데이터셋의 구조를 확인하시오. str(mtcars)</b>
+```{r}
+str(mtcars)
+```
+### <b>2. <span style="color: blue">mtcars</span> 데이터셋의 요약정보를 확인하시오.</b>
+```{r}
+summary(mtcars)
+```
+### <b>3. gear의 개수가 4인 자동차 모델의 모든 열 정보를 추출하시오.</b>
+```{r}
+mtcars[mtcars$gear==4,]
+```
+### <b>4. gear의 개수가 4인 자동차 모델의 mpg, cyl, hp, wt 열 정보만 추출하시오.</b>
+```{r}
+mtcars[mtcars$gear==4,c('mpg', 'cyl', 'hp', 'wt')]
+```
+### <b>5. mpg가 가장 낮은 자동차 모델의 모든 열 정보를 추출하시오.
+```{r}
+mtcars[mtcars$mpg==min(mtcars$mpg), ]
+```
+### <b>6. mpg가 가장 낮은 자동차 모델의 mpg, cyl, hp, wt 열 정보만 추출하시오.
+```{r}
+mtcars[mtcars$mpg==min(mtcars$mpg), c('mpg', 'cyl', 'hp', 'wt')]
+```
+### <b>7. 연비(mpg)의 평균, 분산, 표준편차를 구하시오.</b>
+```{r}
+mean(mtcars$mpg)
+sd(mtcars$mpg)
+var(mtcars$mpg)
+```
+### <b>8. 연비(mpg)가 중앙값(median)보다 큰 모델들의 평균, 표준편차를 구하시오.</b>
+```{r}
+mean((mtcars[mtcars$mpg>median(mtcars$mpg), 'mpg']))
+sd((mtcars[mtcars$mpg>median(mtcars$mpg), 'mpg']))
+```
+
+### <b>9. 연비(mpg)의 <span style="color: blue">히스토그램</span>을 그리시오.</b>
+
+```{r}
+hist(mtcars$mpg,
+     breaks = seq(10,35, by=1),
+     col='royalblue1',
+     border=F)
+```
+
+### <b>10. 기어(gear)의 개수에 따른 빈도수를 나타내는 <span style="color: blue">barplot</span>을 그리시오.</b>
+
+
+
+```{r}
+table(mtcars$gear)
+
+barplot(table(mtcars$gear),
+        main='기어의 개수에 따른 빈도 수',
+        xlab='기어의 개수',
+        ylab='빈도 수',
+        col=c('royalblue1', 'steelblue', 'royalblue4'),
+        border=F)
+```
+
+
+
+### <b>11. mpg와 wt와의 관계를 나타내는 <span style="color: blue">산점도(scatter plot)</span>를 그리시오.</b>
+
+
+```{r}
+plot(mtcars$mpg, mtcars$wt,
+     main='mpg와 wt와의 관계',
+     xlab='mpg(Miles/(US) gallon)',
+     ylab='wt(Weight (1000 lbs))',
+     cex=1.5,
+     pch=16,
+     col='orchid')
+```
+
+
+## <b><span style="color: red">문제 3</span>: state.x77 데이터셋</b>
+
+### 1. <b><span style="color: blue">state.x77</span> 데이터셋의 각 변수값에 대해 조사하시오.</b>
+
+
+```{r}
+# ?state.x77
+st <- as.data.frame(state.x77)
+str(st)
+cor(st, method='kendall')
+```
+
+
+### 2. <b><span style="color: blue">state.x77</span> 데이터셋의 데이터 프레임을 분석하시오.</b>
+
+```{r}
+str(st)
+head(st)
+tail(st)
+```
+
+
+### 3. <b><span style="color: blue">state.x77</span> 데이터셋의 각 변수별 기술적 통계량을 분석하시오.</b>
+
+```{r}
+summary(st)
+```
+
+
+### 4.  <b><span style="color: blue">state.x77</span> 데이터셋의 각 변수별 확률분포를 시각화하시오.</b> 
+
+```{r}
+layout(matrix(c(1:8), 2, 4, byrow = TRUE))
+hist(st$Population, 
+     main = "Population", 
+     col="royalblue4", 
+     border=F, 
+     probability=T, 
+     xlab="Population")
+hist(st$Income, 
+     main = "Income", 
+     col="royalblue4", 
+     border=F, 
+     probability=T, 
+     xlab="Income")
+hist(st$Illiteracy, 
+     main = "Illiteracy", 
+     col="royalblue4", 
+     border=F, 
+     probability=T, 
+     xlab="Illiteracy")
+hist(st$`Life Exp`, 
+     main = "Life Expectancy", 
+     col="royalblue4", 
+     border=F, 
+     probability=T, 
+     xlab="Life Expectancy")
+hist(st$Murder, 
+     main = "Murder", 
+     col="royalblue4", 
+     border=F, 
+     probability=T, 
+     xlab="Murder")
+hist(st$`HS Grad`, 
+     main = "Highschool graduates", 
+     col="royalblue4", 
+     border=F, 
+     probability=T, 
+     xlab="Highschool Graduates")
+hist(st$Frost, 
+     main = "Frost", 
+     col="royalblue4", 
+     border=F, 
+     probability=T, 
+     xlab="Frost")
+hist(st$Area, 
+     main = "Area", 
+     col="royalblue4", 
+     border=F, 
+     probability=T, 
+     xlab="Area")
+
+```
+
+### 5. <b><span style="color: blue">state.x77</span> 데이터셋의 각 변수간의 관계에 대해 분석하고 시각화하시오.</b>
+
+```{r}
+
+#install.packages('PerformanceAnalytics')
+#install.packages('corrplot')
+
+library(PerformanceAnalytics)
+library(corrplot)
+
+heatmap(abs(cor(st)),
+        main = 'Correlation Heatmap (Abs)',
+        Colv = NA, 
+        Rowv = NA)
+
+corrplot(x <- cor(st[,1:8]))
+
+pairs(st[,1:8], 
+      col='royalblue4',
+      pch=20, 
+      main="Scatter Plot Matrices")
+
+chart.Correlation(st, histogram=, pch='+')
+
+#install.packages("psych")
+
+# 상관계수에대한 유의성 검증
+with(st, cor.test(`Life Exp`, Murder))     # 2.26e-11
+with(st, cor.test(`Life Exp`, `HS Grad`))  # 9.196e-06
+with(st, cor.test(`Life Exp`, Population)) # 0.6387
+
+library(psych) 
+print(corr.test(st), short=F)
+
+
+```
+
+### 6. <b><span style="color: blue">state.x77</span> 데이터셋을 대상으로 통계적 분석을 실행하고 통계적 분석을 통해 얻은 분석 결과를 기술하시오.</b>
+
+
+
+#### <b>분석 0. 변수간 상관관계가 제일 높은 두 변수</b>
+변수간 상관관계가 제일 높은 두 변수는 Life Exp와 Murder로, -0.7808458의 피어슨 상관계수로 강한 음의 상관관계를 가진다.
+
+```{r}
+cor(st$Murder, st$`Life Exp`)
+plot(x <- st$`Life Exp`,
+     y <- st$Murder,
+     pch=16,
+     col='royalblue4',
+     main='Murder & Life Exp',
+     xlab='Life Exp',
+     ylab='Murder')
+myPredict <- predict( model<- lm(y ~ x) ) 
+ix <- sort(x,index.return=T)$ix
+lines(x[ix], myPredict[ix], col=2, lwd=2 ) 
+```
+
+변수간 상관관계가 다음으로 높은 두 변수는 Murder와 Illiteracy로, 0.7029752의 피어슨 상관계수로 뚜렷한 양의 상관관계를 지닌다.
+
+```{r}
+cor(st$Murder, st$Illiteracy)
+plot(x <- st$Illiteracy,
+     y <- st$Murder,
+     pch=16,
+     col='royalblue4',
+     main='Murder & Illiteracy',
+     xlab='Illiteracy',
+     ylab='Murder')
+grid(lwd=1)
+myPredict <- predict( model<- lm(y ~ x) ) 
+ix <- sort(x,index.return=T)$ix
+lines(x[ix], myPredict[ix], col=2, lwd=2 )
+```
+
+#### <b>분석 1. 상관관계 가정 검토 :두 변수 중 하나는 정규성만족, 두 변수간 선형관계 존재</b>
+    (1)정규성검정 
+        Q-Q plot, qqline을 따라 값들이 분포한지 확인 
+```{r}
+qqnorm(st$Murder)
+qqline(st$Murder, col=2)
+qqnorm(st$Illiteracy)
+qqline(st$Illiteracy, col=2)
+```
+```{r}
+#kolmogorov-Smirnov test 
+ks.test(st$Murder, 'pnorm', mean=mean(st$Murder), sd=sd(st$Murder))
+ks.test(st$Illiteracy, 'pnorm', mean=mean(st$Illiteracy), sd=sd(st$Illiteracy))
+```
+    H~0~:정규분포를 따른다 
+    H~1~:정규분포를 따르지 않는다.
+    Murder와 Illiteracy 모두 p-valu>0.05이므로 귀무가설 채택함.(정규분포를 따른다)
+    
+    (2) Murder-Illiteracy 상관관계 분석
+```{r}
+#pearson correlation
+cor.test(st$Murder, st$Illiteracy, method='pearson', conf.level = 0.95)
+```
+    H~0~:Murder와 Illiteracy는 상관관계가 없다, 
+    H~1~: Murder와 Illiteracy는 상관관계가 있다. 
+    t통계량 6.8479이고 p-value <0.05, α=0.05 미만으로 나타나 귀무가설을 기각한다.
+    두 변수는 상관계수 R=0.7029752로 높은 상관관계가 있음을 알 수 있다.(CI=0.5279280~0.8207295) 
+    
+    (3) 단순선형회귀분석
+    
+```{r}
+reg.simple <- lm(st$Murder~st$Illiteracy, data=st)
+reg.simple
+summary(reg.simple)
+summary(reg.simple)$coefficients
+plot(st$Murder~st$Illiteracy, data=st)
+abline(coef(reg.simple))
+```
+    회귀모형 적합성확인을 위해 F-검정을 실시한 결과, 유의확률이 유의수준 0.05보다 현저히 낮아 회귀식이 상당히 의미가 있음
+    R-Squared 값을 통해 49.4%로 murder의 변동은 illiteracy에 의해 49.4% 설명됨
+    추정 회귀계수의 유의확률이 0.05보다 낮아 귀무가설(회귀계수=0)을 기각
+    추정 회귀식:Murder=2.396776+4.257457*Illiteracy
+    추정 회귀식으로부터 Illiteracy가 1단위 증가할 때 Murder는 4.257457만큼 증가하고 이는 통계적으로 유의하다.
+
+    회귀분석 기본가정 검토 : 오차항의 독립성, 오차항의 정규성, 오차항의 등분산성
+    (1) 오차항의 독립성
+```{r}
+#install.packages('car')
+library(car)
+durbinWatsonTest(reg.simple)
+```
+    H~0~:오차항이 독립성을 만족한다.
+    H~1~:오차항이 독립서을 만족하지 않는다.
+    2에 가까울수록 독립 (독립성만족)
+    D-W 통계량이 2.385641이고 p-value 값이 0.05를 넘으므로 귀무가설 채택함 (오차항의 독립성 만족)
+    
+    (2) 오차항의 정규성
+```{r}
+plot(reg.simple, 2)
+```
+    (3) 오차항의 등분산성: 오차항의 분산이 동일
+```{r}
+plot(reg.simple, 3) 
+```
+```{r}
+#단순선형회귀분석
+reg.simple <- lm(st$Murder~st$Illiteracy, data=st)
+summary(reg.simple)
+summary(reg.simple)$coefficients
+plot(st$Murder~st$Illiteracy, data=st)
+abline(coef(reg.simple))
+```
+
+
+#### <b>분석 2.다중회귀분석 시도</b>
+
+회귀모형 적합성확인을 위해 F-검정을 실시한 결과, 유의확률이 유의수준 0.05보다 현저히 낮아 회귀식이 상당히 의미가 있음
+
+R-Squared 값을 통해 49.4%로 Life Exp의 변동은 해당 변수들에 의해 73.6% 설명됨
+
+추정 회귀계수의 유의확률이 0.05보다 낮아 귀무가설(회귀계수=0)을 기각
+
+추정 회귀식:Life Exp= 71.03 + 5.014e-05Population -3.001e-01Murder + 4.658e-02Hs-Grad -5.943e-03Frost
+
+
+```{r}
+
+st <- as.data.frame(state.x77)
+lm <- lm(formula=st$`Life Exp`~., data=st)
+summary(lm)
+par(mfrow=c(2,2))
+plot(lm)
+
+# step(), 단계별 선택법
+step_lm <- step(lm, direction = 'both')
+summary(step_lm)
+par(mfrow=c(2,2))
+plot(step_lm)
+par(mfrow=c(1,1))
+
+# 정규성 검정
+# install.packages("car")
+library(car)
+qqPlot(step_lm,labels=row.names(st),id.method="identify",simulate=TRUE,main="Q-Q_ plot")
+
+# 독립성 검정
+durbinWatsonTest(step_lm)
+
+# 다중공선성 확인
+vif(step_lm)
+sqrt(vif(step_lm))>2
+
+crPlots(step_lm)
+
+influencePlot(step_lm)
+
+```
+
+
+## <b><span style="color: red">문제 4</span>: 생활속의 통계학 연습문제 풀이: 확률분포 문제 풀이</b>
+
++ 생활속의 통계학 제 5 장, 제 6 장의 예제/연습문제 중에서 각각 2문제(총 4문제)를 골라 R 코드로 풀어보시오.
+
+### <b>1. 제5장 - 29번 </b>
+  한 중간 판매업자가 50개의 상품을 수입하였다. 이들 수입 상품 중 5개의 결함이 있으나 판매업자는 몇 개의 상품에 결함이 있는지 모른다. 판매업자는 수입 상품 중에서 10개를 임의로 뽑아 결함이 있는지 조사하기로 하였다. 이때, 조사한 상품 중에서 결함이 있는 상품이 2개 이하이면 수입을 허용하기로 하였다. 이 판매업자가 수입된 상품을 허용할 확률을 구하라.
+```{r}
+fact <- function (n) {
+    a = c(1)
+    if (n>0){
+        for (i in 1:n){
+            a[i+1]=a[i]*i
+        }
+    }
+    return(a[n+1])
+}
+```
+
+```{r}
+comb <- function (n, r) {
+    return (fact(n) / fact(r) / fact(n - r))
+}
+```
+
+```{r}
+(comb(45,10)*comb(5,0)+comb(45,9)*comb(5,1)+comb(45,8)*comb(5,2))/comb(50,10)
+```
+### <b>2. 제5장 - 30번 </b>
+    지하수 오염 실태를 조사하기 위하여 30곳에 구멍을 뚫어 수질을 조사하였다. 그 결과 19곳은         오염이 매우 심각하였고, 6곳은약간 오염되었다고 보고하였다. 그러나 채취한 지하수 병들이 섞여       있어 어느 지역의 지하수가 깨끗한지 모른다. 이런 상황에서 5곳을 선정하였을 때, 다음을 구하라.
+    (1) 오염 정도에 따른 확률분포
+
+    심각한 지역=x, 약간 오염된 지역=y, 정상인 지역=z
+    확률 분포 = (19 C x)*(6 C y)*(5 C z)/(30 C 5)
+
+    (2) 선정된 5곳 중에서 매우 심각하게 오염된 지역이 3곳, 약간 오염된 지역이 1곳일 확률
+```{r}
+comb(19,3)*comb(6,1)*comb(5,1)/comb(30,5)
+```
+    (3) 선정된 5곳 중에서 적어도 4곳이 심각하게 오염되었을 확률
+```{r}
+(comb(19,4)*comb(11,1)+comb(19,5))/comb(30,5)
+```
+### <b>3. 제6장 - 17번 </b>
+    X~*N*(10, 9)에 대하여 다음을 만족하는 x~0~을 구하라
+    (1) P(X \leq x~0~) = 0.9986
+```{r}
+qnorm(0.9986, 10, sqrt(9))
+```
+    (2) P(X \leq x~0~) = 0.0154
+```{r}
+qnorm(0.0154, 10, sqrt(9))
+```
+    (3) P(10 \leq X \leq x~0~) = 0.3554
+```{r}
+qnorm(0.3554+0.5, 10, sqrt(9))
+```
+    (4) P(-x~0~ \leq X \leq x~0~) = 0.9030
+```{r}
+qnorm((0.9030+1)/2, 10, sqrt(9))
+```
+    (5) P(-x~0~ \leq X \leq x~0~) = 0.2052
+```{r}
+qnorm((0.2052+1)/2, 10, sqrt(9))
+```
+    (6) P(X \geq x~0~) = 0.6915
+```{r}
+qnorm(0.6915, 10, sqrt(9), lower.tail = F)
+```
+### <b>4. 제6장 - 21번 </b>
+    고교 3학년 학생 1,000명에게 실시한 모의고사 국어점수 X와 수학점수 Y는 각각 X~*N*(75, 9),         Y~*N*(68, 16)인 정규분포를 따르고, 이 두 성적ㄹ은 서로 독립이라고 한다. 물음에 답하라
+```{r}
+xmu <- 75
+xvar <- 9
+ymu <- 68
+yvar <- 16
+```   
+    (1) 국어점수가 82점 이상일 확률
+```{r}
+pnorm(82, xmu, sqrt(xvar), lower.tail = F)
+```
+    (2) 두 과목 점수의 합이 130점 이상, 150점 이하에 해당하는 학생 수
+```{r}
+xy_mu=xmu+ymu
+xy_var=xvar+yvar
+pnorm(c(130, 150), xy_mu, sqrt(xy_var))
+a <- {pnorm(150, xy_mu, sqrt(xy_var))-pnorm(130, xy_mu, sqrt(xy_var))}*1000
+cat('130점과 150점 사이에 있는 학생 수는', ceiling(a), '명입니다.')
+```
+    (3) 각 과목에서 상위 5% 안에 들어가기 위한 최소 점수
+```{r}
+kor=qnorm(0.05, xmu, sqrt(xvar), lower.tail = F)
+kor
+math=qnorm(0.05, ymu, sqrt(yvar), lower.tail = F)
+math
+cat('상위 5%가 되는 최소점수는 국어', ':', ceiling(kor), '점,', '수학', ":", ceiling(math),'점입니다.')
+```
+
+
+
+
+
+## <b><span style="color: red">문제 5</span>: 생활속의 통계학 연습문제 풀이: 통계적 추론 문제 풀이</b>
+
++ 생활속의 통계학 제 7 장, 제 8 장의 예제/연습문제 중에서 각각 2문제(총 4문제)를 골라 R 코드로 풀어보시오.
+
+### <b>1. 제7장 - 3번 </b>
+    \mu = 50이고 모표준편차가 다음과 같은 모집단으로부터 크기 25인 확률표본을 선정할 때,            표본평균이 49와 52 사이일 확률을 구하라.
+```{r}
+n <- 25
+mu <- 50
+a <- c(49, 52)
+```
+    (1) \sigma = 4
+```{r}
+sigma1=4
+sdx1 <- sigma1/sqrt(n)
+sdx1
+pnorm(a,mu, sdx1)
+pnorm(a[2], mu, sdx1)-pnorm(a[1], mu, sdx1)
+```
+    (2) \sigma = 9
+```{r}
+sigma2=9
+sdx2 <- sigma2/sqrt(n)
+pnorm(c(49, 52), 50, sdx2)
+pnorm(a[2], mu, sdx2)-pnorm(a[1], mu, sdx2)
+```
+    (3) \sigma = 12
+```{r}
+sigma3=12
+sdx3 <- sigma3/sqrt(n)
+pnorm(c(49, 52), 50, sdx3)
+pnorm(a[2], mu, sdx3)-pnorm(a[1], mu, sdx3)
+```
+
+### <b>2. 제7장 - 8번 </b>
+  우리나라 20세 이상 성인 남자의 혈중 콜레스테롤 수치는 평규 \mu = 198, 분산 \sigma^2 = 36인 정규분포를 따른다고 가정하자. 물음에 답하라 (단, 단위는 mg/dL이다.)
+```{r}
+mu=198
+var=36
+```
+    (1) 임의로 1명을 선정하였을 때, 이 사람의 혈압이 196과 200 사이일 확률
+```{r}
+pnorm(c(196, 200), mu, sqrt(var))
+pnorm(200, mu, sqrt(var))-pnorm(196, mu, sqrt(var))
+```
+    (2) 100명을 임의로 선정하여 표본을 만들 때, 표본평균 \overline{x}의 표본분포를 구하라
+```{r}
+n=100
+sdx=sqrt(var)/sqrt(n)
+sdx
+cat('x~N(',mu,',', sdx, ')')
+```
+    (3) 표본평균이 196과 200 사이일 확률
+```{r}
+pnorm(c(196, 200), mu, sdx)
+pnorm(200, mu, sdx)-pnorm(196, mu, sdx)
+```
+    (4) 표본평균이 \mu\pm$$frac{\sigma}{5}$$ 사이일 확률
+```{r}
+interval = mu + c(-(sqrt(var)/5), sqrt(var)/5)
+interval[1]
+pnorm(interval[2], mu, sdx)-pnorm(interval[1], mu, sdx)
+```
+
+### <b>3. 제8장 - 2번 </b>
+
+  모분산 4인 정규모집단의 모평균에 대한 95% 신뢰도를 갖는 구간을 추정하기 위하여 다음과 같은 크기의 표본을 선정한다. 이때 오차한계를 구하라.
+  
+```{r}
+#se=2/sqrt(n)
+var=4
+se <- function(x) sqrt(var)/sqrt(n)
+```
+    (1) *n* = 50
+```{r}
+n=50
+se1 <- se(1)
+se1
+```
+    (2) *n* = 100
+```{r}
+n=100
+se2 <- se(2)
+se2
+```
+    (3) *n* = 200
+```{r}
+n=200
+se3 <- se(3)
+se3
+```
+    (4) *n* = 500
+```{r}
+n=500
+se4<- se(4)
+se4
+```
+
+### <b>4. 제8장 - 7번 </b>
+
+  어느 회사에서 생산하는 비누의 무제는 분산이 \\sigma^2 = 5.4g인 정규분포를 따른다고 한다. 50개의 비누를 임의로 추출하였을 때, 그 평균 무게의 값은 \\overline{x} = 95.1g 이었다. 이 회사에서 생산하는 비누의 평균 무게에  대한 95% 신뢰구간을 구하라.
+  
+```{r}
+var <- 5.4
+n <- 50
+mu <- 95.1
+sigma <- sqrt(var/n)
+CI <- mu + c(-1.96, 1.96)*sigma
+CI
+cat('95% CI =', CI[1], '~', CI[2])
+```
+
+

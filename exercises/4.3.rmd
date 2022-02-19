@@ -1,0 +1,227 @@
+# 3. dataset state.x77
+
+<<init>>
+```{r}
+install.packages(c('psych','vsd','dplyr','gplots','data.table'))
+library(psych)
+library(vcd)
+library(dplyr)
+library(gplots)
+library(data.table)
+```
+
+
+## 3-1. state.x77 데이터셋의 각 변수값에 대해 조사하시오.(?state.x77)
+```{r}
+?state.x77
+
+# View(state.x77)
+
+cat('\n@@ HEAD @@ ----------------------- \n')
+head(state.x77)
+cat('\n@@ variable names @@ ----------------------- \n')
+dimnames(state.x77)[2]
+cat('\n@@ STR @@ ----------------------- \n')
+str(state.x77)
+```
+
+## 3-2. state.x77 데이터셋의 데이터 프레임을 분석하시오.(as.data.frame(state.x77))
+```{r}
+prob3 = as.data.frame(state.x77)
+prob3
+
+# check NA
+cat('\n@@ CHECK NA @@\n')
+colSums(is.na(prob3))
+# str
+cat('\n@@ str @@\n')
+prob3.str = str(prob3)
+```
+
+## 3-3. state.x77 데이터셋의 각 변수별 기술적 통계량을 분석하시오.
+```{r}
+# 1. summary
+prob3.summary = summary(prob3)
+prob3.summary
+
+# 2. describe
+prob3.describe = describe(prob3)
+prob3.describe
+```
+
+## 3-4. state.x77 데이터셋의 각 변수별 확률분포를 시각화하시오.
+```{r}
+hist_pd_by_name = function(df,name){
+  x = as.vector(t(df[name]))
+  hist(x,breaks=this_breaks,main=name,xlab=name,freq=F)
+  
+  this_range = range(x)
+  curve(dnorm(x,mean = prob3.describe[name,'mean'],sd = prob3.describe[name,'sd']),from=this_range[1],to=this_range[2],add=T,lty=2,lwd=2,col='red')
+}
+
+hist_par = function(df, names){
+  this_df = copy(df)
+  
+  par(mfrow = c(3,3)) # 일반화 필요
+  for(i in names) {
+    hist_pd_by_name(this_df,i)
+  }
+  
+  rm(this_df)
+}
+
+prob3.names = names(prob3)
+this_breaks = as.integer(sqrt(length(rownames(prob3))))
+hist_par(prob3, prob3.names)
+```
+
+## 3-5. state.x77 데이터셋의 각 변수간의 관계에 대해 분석하고 시각화하시오.
+```{r fig.width=15,fig.height=15}
+plot_scatter_all = function(df){
+  #plot(df) 또는 
+  pairs(cbind(df))
+}
+
+plot_scatter_by_name = function(df,names,t){
+  df_copied = copy(df)
+  names_except_t = names[! names %in% t]
+  par(mfrow=c(3,3))
+  
+  for(i in names_except_t){
+    plot(x = df_copied[,t],y=df_copied[,i],xlab=t,ylab=i,pch=19,col='blue',frame=F)
+    grid(nx=NULL,ny=NULL,lty=2,col='gray',lwd=2)
+  }
+}
+for(i in prob3.names){
+  plot_scatter_by_name(prob3,prob3.names,i)
+}
+
+plot_scatter_all(prob3)
+
+```
+
+## 3-6. state.x77 데이터셋을 대상으로 통계적 분석을 실행하고 통계적 분석을 통해 얻은 분석 결과를 기술하시오.
+```{r, fig.width=15, fig.height=15}
+? apply
+? count
+? aov
+
+analyze_frequency = function(df,df_names){
+  cat('\n\t\t @@ 빈도 분석 @@ \t\t\n')
+  
+  # 빈도가 1 이상의 원소들과 그 변수
+  for(i in df_names){
+      print(i)
+      tabled = table(df[i])
+      print(tabled[tabled>1])
+  }
+}
+analyze_mean = function(df){
+   cat('\n\t\t @@ 평균 분석 @@ \t\t\n')
+   cat('\tMEAN :\n')
+   print(sapply(df,sum))
+   # 추가로, 중앙값, 범이 등을 구함
+   cat('\tMEDIAN :\n')
+   print(sapply(df,median))
+   cat('\tRANGE :\n')
+   print(sapply(df,range))
+   cat('\n')
+}
+analyze_correlation = function(df,df_names){
+  cat('\n\t\t @@ 상관관계 분석 @@ \t\t\n')
+  # 4-1 산점도 비교
+   for (i in df_names){
+     names_except_i = df_names[! df_names %in% i]
+     par(mfrow = c(3,3))
+     a = as.vector(t(df[i]))
+     for(j in names_except_i){
+       b = as.vector(t(df[j]))
+       plot(formula=a~b,pch=19,xlab=j,ylab=i)
+     }
+   }
+  
+  # 4-2. 상관관계계수 비교
+  cat('\n\tcorrelation\n')
+  cor_result = cor(df)
+  cor_result[which(cor_result==1)] = 0
+  cor_result[which(cor_result != max(cor_result))]= 0
+  cat('\n\t 매우 높은 상관관계 : \n')
+  print(cor_result)
+  
+  cat('\n\tpearson\n')
+  pearson_result = cor(df,method='pearson')
+  pearson_result[which(pearson_result==1)] = 0
+  pearson_result[which(pearson_result != max(pearson_result))]= 0
+  cat('\n\t 매우 높은 상관관계 : \n')
+  print(pearson_result)
+
+  cat('\n\tspearman\n')
+  spearman_result = cor(df,method='spearman')
+  spearman_result[which(spearman_result==1)] = 0
+  spearman_result[which(spearman_result != max(spearman_result))]= 0
+  cat('\n\t 매우 높은 상관관계 : \n')
+  print(spearman_result)
+
+  cat('\n\tkendall\n')
+  kendall_result = cor(df,method='kendall')
+  kendall_result[which(kendall_result==1)] = 0
+  kendall_result[which(kendall_result != max(kendall_result))]= 0
+  cat('\n\t 매우 높은 상관관계 : \n')
+  print(kendall_result)
+}
+
+ANOVA = function(df,df_names){
+  cat('\n\t\t @@ 변량 분석(one-way ANOVA) @@ \t\t\n')
+
+  for (i in df_names){
+    names_except_i = df_names[! df_names %in% i]
+    cat('\n',i,'\n')
+    
+    par(mfrow=c(3,5))
+    a = as.vector(t(df[i]))
+    for(j in names_except_i){
+      b = as.vector(t(df[j]))
+      
+      data = data.frame(a,b)
+      
+      boxplot(formula=a~b,pch=19,xlab=j,ylab=i)
+      plotmeans(a ~ b, data=df, xlab=j,ylab=i,lwd=2)
+      print(aov(a~b,data=df))
+    }
+  }
+}
+
+analyze_statistically = function(df){
+  df_names = names(df)
+  
+   # 1. 빈도 분석
+   analyze_frequency(df,df_names)
+  
+  
+   # 2. 평균 분석
+   analyze_mean(df)
+  
+   # 3. 변랑 분석
+   ANOVA(df,df_names)
+
+   # 4. 상관 분석
+   analyze_correlation(df,df_names)
+}
+
+
+analyze_statistically(prob3)
+```
+# 결론
+
+1.
+상관관계를 살펴본 결과
+살인 illiteracy이 가장 깊은 연관관계를 가지는 것을 확인할 수 있었다.
+
+2.
+대부분의 관계들은 크게 관련이 없거나 있더라도 다른 통계 분석에서 그 의미를 찾기 어려웠다.
+
+```{r}
+# 메모리 비우기
+rm(list=ls())
+```
+

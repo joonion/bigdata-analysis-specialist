@@ -1,0 +1,552 @@
+---
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 빅데이터통계분석_실습과제_1조 
+### (김상명, 이지현, 조준영, 채지혜, 한혜림)
+
+---
+
+### 문제 1 : 약수와 소수 구하기
++ n이 입력값으로 주어질 때 약수의 개수를 출력하는 함수를 완성하시오.
+    + 예) div_count(n)
++ n이 입력값으로 주어질 때 소수의 개수를 출력하는 함수를 완성하시오.
+    + 예) prime_count(n)
+    + div_count()와 sapply() 함수를 이용할 수 있다.
+    + (소수는 약수의 개수가 2개인 수라는 사실을 이용해 볼 것.)
+
+```{r}
+# n이 입력값으로 주어질 때 약수의 개수를 출력하는 함수
+
+# 약수 
+div_count <- function(n)sum(n%%(1:n) == 0)
+
+# 소수
+prime_count <- function(n)sum(sapply(2:n, div_count) == 2)
+
+div_count(2)
+div_count(9)
+div_count(10)
+div_count(100)
+prime_count(10)
+prime_count(100)
+
+```
+
+---
+
+### 문제 2: mtcars 데이터셋
+
+```{r}
+# mtcars 데이터셋의 구조를 확인하시오. 
+str(mtcars)
+
+# mtcars 데이터셋의 요약정보를 확인하시오. 
+summary(mtcars)
+
+# gear의 개수가 4인 자동차 모델의 모든 열 정보를 추출하시오.
+mtcars[mtcars$gear==4,]
+
+# gear의 개수가 4인 자동차 모델의 mpg, cyl, hp, wt 열 정보만 추출하시오.
+mtcars[mtcars$gear==4,c('mpg', 'cyl', 'hp', 'wt')]
+
+# mpg가 가장 낮은 자동차 모델의 모든 열 정보를 추출하시오.
+sort(mtcars$mpg) # 10.4가 가장 낮음
+# mpg == 10.4인 경우만 추출
+mtcars[mtcars$mpg == 10.4,]
+# 정렬했을 때 가장 첫번째에 있는 값만 추출
+mtcars[sort(mtcars$mpg)[1],]
+
+# mpg가 가장 낮은 자동차 모델의 mpg, cyl, hp, wt 열 정보만 추출하시오.
+# mpg == 10.4인 경우만 추출
+mtcars[mtcars$mpg == 10.4, c('mpg', 'cyl', 'hp', 'wt')]
+# 정렬했을 때 가장 첫번째에 있는 값만 추출
+mtcars[sort(mtcars$mpg)[1], c('mpg', 'cyl', 'hp', 'wt')]
+
+# 연비(mpg)의 평균, 분산, 표준편차를 구하시오.
+mean(mtcars$mpg) # 평균
+var(mtcars$mpg) # 분산
+sd(mtcars$mpg) # 표준편차
+
+# 연비(mpg)가 중앙값(median)보다 큰 모델들의 평균, 표준편차를 구하시오.
+mean(mtcars[mtcars$mpg > median(mtcars$mpg),'mpg'])
+sd(mtcars[mtcars$mpg > median(mtcars$mpg),'mpg'])
+
+# 연비(mpg)의 히스토그램을 그리시오.
+hist(mtcars$mpg, main = 'mpg', 
+     col = c('lightblue', 'mistyrose','lightcyan','lavender','cornsilk','pink'))
+
+# 기어(gear)의 개수에 따른 빈도수를 나타내는 barplot을 그리시오.
+mt.tb <- table(mtcars$gear)
+barplot(mt.tb,
+        col =  c('sky blue', 'Dodger Blue', 'cornflower blue'),
+        main = '기어(gear)의 개수에 따른 빈도수',
+        xlab = '기어의 개수',
+        ylab = '빈도 수')
+
+# mpg와 wt와의 관계를 나타내는 산점도(scatter plot)를 그리시오.
+plot(mtcars$mpg, mtcars$wt)
+```
+
+---
+
+### 문제 3: state.x77 데이터셋
+
+```{r}
+
+# state.x77 데이터셋의 각 변수값에 대해 조사하시오.
+?state.x77
+
+# state.x77 데이터셋의 데이터 프레임을 분석하시오.
+st <- as.data.frame(state.x77)
+
+# state.x77 데이터셋의 각 변수별 기술적 통계량을 분석하시오.
+summary(st)
+
+# 정규분포를 따르는 것과 따르지 않는 것 하나 보여주기!!
+# state.x77 데이터셋의 각 변수별 확률분포를 시각화하시오.
+
+# 1. Population
+hist(st$Population, breaks = 25, prob = T) 
+
+# 정규분포 곡선 (dnorm : 정규분포)
+x <- seq(0, 25000, length(10000))
+curve(dnorm(x, 4246, sd(st$Population)), 0, 25000,
+      add = T, col = 'red', lwd= 2)
+
+# 지수분포 그래프
+lambda <- 0.00025
+y <- lambda * exp(-lambda * x)
+lines(x, dexp(x, y), col = 'blue', lwd=2, lty = 2)
+
+```
+
+##### 📍 정규분포를 따르지 않음
+##### 💡 지수분포를 따르는 것으로 보임
+
+
+---
+
+```{r}
+## 2. Income
+hist(st$Income, breaks = 25, prob = T) 
+x <- seq(3000, 10000, length(10000))
+curve(dnorm(x, mean(st$Income), sd(st$Income)),3000, 10000,
+      add = T, col = 'red')
+
+```
+
+##### 💡 정규분포를 따름
+
+---
+
+```{r}
+## 3. Illiteracy
+hist(st$Illiteracy, breaks = 10, prob = T)
+
+# 정규분포 그래프
+x <- seq(0.5, 4.0, length(100))
+curve(dnorm(x, mean(st$Illiteracy), sd(st$Illiteracy)),0.5, 3.0,
+      add = T, col = 'red')
+
+# 지수분포 그래프
+lambda <- 2
+y <- lambda * exp(-lambda * x)
+lines(x, dexp(x, 2), col = 'blue', lwd=2, lty = 2)
+```
+
+---
+
+```{r}
+## 4. Life Exp
+hist(st$`Life Exp`, breaks = 25, prob = T)
+x <- seq(65, 75, length(100))
+curve(dnorm(x, mean(st$`Life Exp`), sd(st$`Life Exp`)),65, 75,
+      add = T, col = 'red')
+
+## 4. Murder
+hist(st$Murder, breaks = 25, prob = T)
+x <- seq(0, 20, length(100))
+curve(dnorm(x, mean(st$Murder), sd(st$Murder)),0, 25,
+      add = T, col = 'red')
+
+```
+
+##### 👉 그외 HS Grad, Frost, Area 변수들이 있음
+
+---
+
+```{r}
+# state.x77 데이터셋의 각 변수간의 관계에 대해 분석하고 시각화하시오.
+plot(st)
+scatter.smooth(st$Illiteracy,st$Frost)
+scatter.smooth(st$Illiteracy,st$`Life Exp`)
+scatter.smooth(st$Illiteracy,st$Murder)
+
+
+# state.x77 데이터셋을 대상으로 통계적 분석을 실행하고
+# 통계적 분석을 통해 얻은 분석 결과를 기술하시오.
+# 예) 변수간 상관관계가 가장 높은 두 변수는 Murder와 Illiteracy이다.
+# 상관계수, 선형회귀식
+# 상관계수(수치)
+cor_r <- round(cor(st),1)
+cor_r
+
+## 0.9 이상 : 매우 높은 상관관계 (0)
+sum(abs(cor_r) >= 0.9 & abs(cor_r) != 1 )/2
+
+## 0.9 ~ 0.7 : 높은 상관관계 (4)
+sum(abs(cor_r) < 0.9 & abs(cor_r) >= 0.7 )/2
+
+## 0.7 ~ 0.4 : 다소 높은 상관관계 (8)
+sum(abs(cor_r) < 0.7 & abs(cor_r) >= 0.4 )/2
+
+## 0.4 ~ 0.2 : 낮은 상관관계 (9)
+sum(abs(cor_r) < 0.4 & abs(cor_r) >= 0.2 )/2
+
+## 0.2 미만 : 상관관계 없음 (7)
+sum(abs(cor_r) < 0.2)/2
+
+# 상관계수 (시각적)
+library(corrplot)
+corrplot(cor_r, method='number')
+
+```
+
+
+##### 변수간 상관계수가 0.7이상인 높은 상관관계를 띄는 두 변수는
+##### 양의 상관계수 : Illiteracy  Murder (0.7)
+##### 음의 상관계수 : Illiteracy  HS Grad (-0.7), Illiteracy  Frost (-0.7), Life Exp  Murder (-0.8)
+
+---
+
+#### 다중회귀모델
++ 다중회귀는 단순회귀분석과 달리 예측변수가 두 개 이상인 경우에 사용한다. 다중회귀분석에서 예측변수의 수가 많을 경우 사용
++ 이 데이터의 경우 x (설명변수, 독립변수 - 원인이 되는 변수)가 하나가 아니라 여러개 이므로 다중선형회귀를 사용해야함
++ 종속변수 : 살인률
++ 독립변수 (설명변수) : 인구, 수입, 문맹률, 결빙일수 
+
+```{r}
+
+states <- as.data.frame(state.x77[,c("Murder","Population","Illiteracy", "Income","Frost")])
+states['rich'] <- ifelse(mean(states$Income) < states$Income, 1, 0) 
+
+# 숫자형으로 되어 있으므로 factor 형식으로 바꾸어 주기
+# class(states$rich) 
+states$rich <- factor(states$rich)
+
+fit <- lm(Murder ~ ., data=states)
+fit
+
+par(mfrow=c(2,2))
+plot(fit) # 선형성, 정규성, 등분산성 모두 만족
+
+```
+
+###### 등분산성 
+###### : 빨간 실선은 잔차의 추세를 나타내며 빨간 실선이 점선에서 크게 벗어난다면 예측값에 따라 잔차가 크게 달라짐
+
+###### 정규성 
+###### : 잔차가 정규분포를 띄면 점들이 점선을 따라 배치 되어 있어야 함
+
+---
+
+
+```{r}
+summary(fit) 
+```
+
+* summary를 했을 때 Population, Illiteracy는 p-value값이 0.05보다 작아서 유의하지만, 나머지 변수는 유의하지 않음을 알 수 있음
+
+---
+
+```{r}
+# 각각의 산점도와 다중공성성 
+library(psych)
+library(car)
+
+# 각각 모든 변수들간 산점도 그리기
+# 다중공선성 - 다중회귀분석에서 x변수(설명변수, 독립변수)들 끼리 상관관계가 존재할 경우
+# 회귀 계수의 분산을 크게하여, 회귀분석 시 추정 회귀 계수를 믿을 수 없게 되는 문제.
+pairs.panels(states[names(states)])
+
+```
+
+* 위 그래프에서 숫자는 상관관계를 나타내며, -1에 가까우면 음의 상관관계, 1에 가까우면 양의 상관관계를 의미함
+
+* 위 그래프에서 나타난 값 중 0.81, 0.70과 같이 1에 가까운 수가 있으므로 다중공선성이 의심됨
+
+---
+
+```{r}
+# 다중공선성 확인
+# 'sqrt(car::vif(fit))' 가 2보다 크면 다중공선성이 있는 것!!
+sqrt(car::vif(fit)) > 2
+
+```
+
+* 위에서는 모두 false이므로 다중공선성이 없다고 판단할 수 있음
+
+---
+
++ 다중선형회귀분석을 할때 회귀모형에서 어떤 x변수(설명변수)를 어떻게 선택해야 하는지 알 수 있음 
++ 설명변수가 유의하지 않다고 해서 한번에 다 제거해서는 안됨
++ 단계별로 하나씩 제거해야하고, 하나씩 제거하다 보면 유의하지 않았던 변수가 유의해 질 수도 있음
+
+---
+
+#### 1. 전진 선택법 (forward)
++ 상수항만 포함시킨 회귀모형에서 설명변수를 하나씩 추가하는 방법
++ 먼저 상수항만 포함된 회귀모형을 만들어 줌
+
+```{r}
+fit.con <- lm(Murder~1,data=states)
+
+# 이제 'step'이라는 함수를 이용하여 유의한 설명변수를 추출합니다.
+# *AIC가 작은 것을 기준으로 추출합니다.
+fit.forward <- step(fit.con,scope=list(lower=fit.con,upper=fit),
+                    direction = "forward")
+
+# 정말 유의한지 안한지는 summary를 통해서 알아봐야함
+summary(fit.forward)
+
+
+```
+
+##### 💡 인구수와 문맹률 모두 유의함을 알 수 있음
+
+---
+
+#### 2. 후진 제거법 (backward)
++ 모든 변수를 포함시킨 모형에서 하나씩 제거해 나가는 방법
+
+```{r}
+fit.backward <- step(fit,scope=list(lower=fit.con,upper=fit),
+                     direction = "backward")
+
+summary(fit.backward)
+```
+
+##### 💡 최종적으로 인구수, 문맹률, 수입, rich 추출됨
+##### 💡 인구수와 문맹률만 유의함을 알 수 있음
+
+---
+
+#### 3. 단계별 선택법 (stepwise)
++ stepwise는 전진선택과 후진제거를 왔다갔다하며 모두 쓰는 방법
+
+```{r}
+# 우선 상수항만을 포함하고 있는 모형에서 시작해 보겠습니다.
+fit.both <- step(fit.con,scope=list(lower=fit.con,upper=fit), direction = "both")
+summary(fit.both)
+```
+
+##### 💡 최종적으로 문맹률과 인구수가 추출되었으며, 모두 유의한것을 알 수 있음
+
+---
+
+```{r}
+# 회귀방정식
+coef(fit.both)
+```
+
+##### 💡 최종 회귀방정식 : y = 1.6515497 +  4.0807366 * Illiteracy + 0.0002242 * Population  
+
+---
+
+
+```{r}
+# 마지막으로 지금까지 새운 모델로 살인률(y, 종속변수)을 예측
+# pridict 함수를 이용해서 예측하고, 보기좋게 data frame 형태로 바꿔줌
+## 점추정
+pre_murder <- predict(fit.both, newdata = states)
+pre_murder <- as.data.frame(pre_murder)
+pre_murder
+
+```
+
+###### 각 주별로 (각 행 별로) 예측된 살인율을 확인 할 수 있음
+
+---
+
+```{r}
+## 구간추정을 해보겠습니다.
+pre_murder <- predict(fit.both, newdata = states, interval = "confidence")
+pre_murder <- as.data.frame(pre_murder)
+pre_murder
+
+# 얼마나 잘 예측했는지 실제값과 비교 작업실시
+tmp <- cbind(pre_murder,states$Murder)
+tmp2 <- tmp[tmp$lwr <= tmp$`states$Murder` & tmp$`states$Murder` <= tmp$upr,] 
+
+nrow(tmp) # 50
+nrow(tmp2) # 18
+
+
+```
+
+##### 💡 states$Murder(실제값) 총 50개 중 18개가 예측구간에 포함 됨
+
+---
+
+### 문제 4: 생활속의 통계학 연습문제 풀이
+#### - 5장 -
+##### 연습문제 22)  
+##### 숫자 1에서 100까지 적힌 카드가 들어 있는 주머니에서 임의로 한장을 꺼내어 나온 숫자를 확률변수 X라고 할 때, 물음에 답하라
+
+```{r}
+# (1) X의 확률함수를 구하라
+p.x = 1/100 # x = 1:100
+
+# (2) X의 평균과 분산 그리고 표준편차를 구하라
+x <- seq(1, 100, length=100)
+
+mean(x) # 50.5
+var(x) # 841.6667
+sd(x) # 29.01149
+
+```
+
+---
+
+##### 연습문제 29) 
+##### 한 중간 판매업자가 50개의 상품을 수입하였다. 이들 수입 상품 중 5개의 상품에 결합이 있으나 판매업자는 몇개의 상품에 결함이 있는지 모른다. 
+##### 판매업자는 수입 상품 중에서 10개를 임의로 뽑아 결합이 있는지 조사하기로 하였다.
+##### 이때, 조사한 상품 중에서 결함이 있는 상품이 2개 이하이면 수입을 허용하기로 하였다.
+##### 이 판매업자가 수입된 상품을 허용할 확률을 구하라
+
+
+```{r}
+# 방법 1
+(choose(45,8)*choose(5,2)+choose(45,9)*choose(5,1)+choose(45,10))/choose(50,10)
+
+# 방법 2
+event <- c(rep('결함',5), rep('정상',45)) 
+event
+
+count = 0
+n_sim = 100000
+set.seed(1)
+
+for (i in 1:n_sim) {
+    result <- sample(event, 10, replace = F)
+    count <- ifelse(sum(result == "결함") < 3, count + 1, count) 
+    
+}
+count / n_sim  # 0.9517
+
+```
+
+---
+
+#### - 6장 -
+##### 연습문제 21) 
+##### 고교 3학년 학생 1,000명에게 실시한 모의고사에서 국어 점수 X와 수학 점수 Y는 각각 X~N(75,9), Y~N(68, 16)인 정규분포를 따르고, 이 두 성적은 서로 독립이라고 한다.
+
+
+```{r}
+# (1) 국어 점수가 82점 이상일 확률을 구하라
+pnorm(82, 75, sqrt(9)) # 0.99
+
+# (2) 두 과목의 점수의 합이 130점 이상, 150점 이하에 해당하는 학생 수를 구하라
+pnorm(130, 75+68, sqrt(9+16))
+pnorm(150, 75+68, sqrt(9+16))
+
+round(0.9192433 - 0.004661188,3) * 1000 # 915명
+ 
+# (3) 각 과목에서 상위 5% 안에 들어가기 위한 최소 점수를 구하라
+qnorm(0.95, 75, sqrt(9)) # 국어 : 80점
+qnorm(0.95, 68, sqrt(16)) # 수학 : 75점
+
+```
+
+---
+
+##### 예제 14) 
+##### 확률변수 X가 모수 n =50, p = 0.7인 이항분포를 따를 때 다음을 구하라.
++ P(X<=39) = 0.9211, P(X<=32) = 0.2178
+
+```{r}
+# (1) 이항확률 P(33<=X<=39)
+0.9211 - 0.2178 # 0.7033
+
+# (2) 정규근사에 의한 P(33<=X<=39)
+mu = 50*0.7
+v = 50*0.7*0.3
+
+pnorm(39, mu, sqrt(v)) # 0.891478
+pnorm(33, mu, sqrt(v)) # 0.268547
+
+0.891478 - 0.268547 # 0.622931
+```
+
+---
+
+### 문제 5: 생활속의 통계학 연습문제 풀이
+#### - 7장 -
+##### 예제 10) 
+##### 성인 남성의 키는 평균 173.38cm, 표준편차 5.75cm이고, 성인 여성의 키는 160.39cm, 표준편차 4.99cm라 한다. 
+##### 남성과 여성을 각각 150명씩 임의로 선정했을 때, 남성의 평균 키가 여성의 평균 키보다 14cm 이상 클 확률  
+
+```{r}
+x = 173.38-160.39
+s = 5.75^2/150+4.99^2/150
+# P(X-Y>14)
+p = (14-12.99)/0.62 # 1.63 -> 0.9484
+
+1 - 0.9484 # 0.0516
+```
+
+---
+
+##### 연습문제 12) 
+##### 우리나라 20세 이상 성인 남자의 혈중 콜레스테롤 수치는 mu = 198인 정규분포를 따름 25명을 무작위로 선정하여 콜레스테롤을 측정한 결과 m = 197, s = 3.45
+
+```{r}
+# (1) 표본평균 m에 대한 표본분포를 구하라
+(x-198)/(3.45/5)~t(24)
+
+# (2) 표본평균이 196.82와 199.18 사이일 근사확률을 구하라
+z1 = (196.82-198)/(3.45/5)
+z2 = (199.18-198)/(3.45/5)
+
+pnorm(z2) - pnorm(z1) # 0.9
+
+# (3) 표본평균이 상위 2.5%인 경계수치를 구하라
+qnorm(0.025, 198, 3.45/5, lower.tail = F)
+qnorm(0.975, 198, 3.45/5) # 답 : 199.3524
+
+```
+
+---
+
+#### - 8장 -
+##### 연습문제 8) 
+##### 다음은 어느 직장에 근무하는 직원 20명에 대한 혈중 콜레스테롤 수치를 조사한 자료이다. 
+##### 이 직장에 근무하는 직원들의 콜레스테롤 수치는 분산이 400인 정규분포를 따른다고 할 때, 평균 콜레스테롤에 대한 95% 신뢰구간을 구하라
+
+```{r}
+library(BSDA)
+
+x8 <-  c(193.27, 193.88, 253.26, 237.15, 188.83, 200.56, 274.31, 230.36, 212.08, 222.19, 198.48, 202.50, 215.35, 218.95, 233.16, 222.23, 218.53, 204.64, 206.72, 199.37)
+z.test(x8, sigma.x = sqrt(400))  #  95% 신뢰구간 : 207.5258 225.0562 (mg/dL)
+
+```
+
+---
+
+##### 연습문제 15) 
+##### 2014년에 한국소비자보호원은 서울 지역 자가 운전자 1000명을 대상으로 설문조사를 실시 
+##### 가짜 석유 또는 정량 미달 주유를 의심한 경험이 있는 소비자가 79.3%에 이르는 것
+
+```{r}
+phat  <-  0.793
+n = 1000
+s_90 = 1.645 * sqrt((phat * (1 - phat)) / n) # 0.021
+sprintf('서울 지역 자가 운전자의 비율에 대한 90%% 신뢰구간 : %.3f, %.3f', phat - s_90, phat + s_90)
+
+```
+

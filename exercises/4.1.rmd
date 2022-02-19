@@ -1,0 +1,54 @@
+# 1. 약수와 소수 구하기
+
+## 1-1. n이 입력값으로 주어질 때 약수의 개수를 출력하는 함수를 완성하시오.
+```{r}
+# divisor counter 1
+divisor_counter = function(n){
+  n_to_sqrt_n = 1:sqrt(n)
+  d = n_to_sqrt_n[n %% n_to_sqrt_n == 0]
+  d = c(d, n / d)
+  
+  length(d)
+}
+
+# divisor counter 2 - for
+div_count <- function(n) {
+    count <- 0
+    for(i in 1:n) if (n%%i==0) count <- count+1
+    
+    count
+}
+
+n1 = 2142
+
+divisor_counter(n1)
+div_count(n1)
+```
+## 1-2. n이 입력값으로 주어질 때 소수의 개수를 출력하는 함수를 완성하시오.
+```{r}
+# recursive
+prime_number_counter = function(n) ifelse(n>1,ifelse(divisor_counter(n)==2,prime_number_counter(n-1)+1,prime_number_counter(n-1)),0)
+
+# sapply
+prime_number_counter2 = function(n) sum(sapply(2:n2,function(n) divisor_counter(n) == 2))
+
+# for
+prime_number_counter3 <- function(n){
+    v <- c(2)
+    for (i in 2:n) if (sum(i%%v==0)==0) v <- c(v,i)
+        
+    length(v)
+}
+
+n2 = 100
+
+prime_number_counter(n2)
+prime_number_counter2(n2)
+prime_number_counter3(n2)
+```
+
+```{r}
+# 메모리 비우기
+rm(list=ls())
+```
+

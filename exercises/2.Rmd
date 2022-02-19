@@ -1,0 +1,288 @@
+# 2조 과제
+### 김단비 | 김형우 | 구민지 | 유호준 | 이채림
+
+### 문제 1: 약수와 소수 구하기
+
+###### n이 입력값으로 주어질 때 약수의 개수를 출력하는 함수를 완성하시오.
+```{r}
+div_cnt <- function (x) {
+  return(sum(x %% 1:x == 0))
+}
+
+div_cnt(6)
+```
+
+###### n이 입력값으로 주어질 때 소수의 개수를 출력하는 함수를 완성하시오.
+```{r}
+prime_count <- function(x) {
+  return(sum(sapply(1:x, function(x) {div_cnt(x) == 2})))
+}
+
+prime_count(4)
+```
+
+
+### 문제 2: mtcars 데이터셋
+
+###### mtcars 데이터셋의 구조를 확인하시오.
+```{r}
+str(mtcars)
+```
+###### mtcars 데이터셋의 요약정보를 확인하시오.
+```{r}
+summary(mtcars)
+```
+###### gear의 개수가 4인 자동차 모델의 모든 열 정보를 추출하시오.
+```{r}
+mtcars[mtcars$gear==4,]
+```
+###### gear의 개수가 4인 자동차 모델의 mpg, cyl, hp, wt 열 정보만 추출하시오.
+```{r}
+#방법1
+mtcars[mtcars$gear == 4, c('mpg', 'cyl', 'hp', 'wt')]
+#방법2
+mtcars[mtcars$gear==4, c(1,2,4,6)]
+```
+###### mpg가 가장 낮은 자동차 모델의 모든 열 정보를 추출하시오.
+```{r}
+mtcars[mtcars$mpg == min(mtcars$mpg),]
+```
+###### mpg가 가장 낮은 자동차 모델의 mpg, cyl, hp, wt 열 정보만 추출하시오.
+```{r}
+mtcars[mtcars$mpg == min(mtcars$mpg), c('mpg', 'cyl', 'hp', 'wt')]
+```
+###### 연비(mpg)의 평균, 분산, 표준편차를 구하시오.
+```{r}
+mean(mtcars$mpg)
+var(mtcars$mpg)
+sd(mtcars$mpg) 
+```
+###### 연비(mpg)가 중앙값(median)보다 큰 모델들의 평균, 표준편차를 구하시오.
+```{r}
+mean(mtcars$mpg > median(mtcars$mpg), na.rm = TRUE)
+sd(mtcars$mpg > median(mtcars$mpg), na.rm = TRUE)
+```
+###### 연비(mpg)의 히스토그램을 그리시오.
+```{r}
+hist(mtcars$mpg, main = 'Histogram of mpg', xlab = 'cars', ylab = 'mpg')
+```
+###### 기어(gear)의 개수에 따른 빈도수를 나타내는 barplot을 그리시오.
+```{r}
+barplot(table(mtcars$gear), 
+        xlab = '기어 개수', ylab = '빈도수')
+```
+###### mpg와 wt와의 관계를 나타내는 산점도(scatter plot)를 그리시오.
+```{r}
+plot(x = mtcars$mpg, y=mtcars$wt, xlab = "mpg", ylab="wt")
+```
+
+
+### 문제 3: state.x77 데이터셋
+
+###### state.x77 데이터셋의 각 변수값에 대해 조사하시오.
+```{r}
+?state.x77
+```
+###### state.x77 데이터셋의 데이터 프레임을 분석하시오.
+```{r}
+st <- as.data.frame(state.x77)
+st
+```
+###### state.x77 데이터셋의 각 변수별 기술적 통계량을 분석하시오.
+```{r}
+summary(st)
+```
+###### state.x77 데이터셋의 각 변수별 확률분포를 시각화하시오.
+```{r}
+x <- seq(0, 16, length=200)
+y <- dnorm(x, mean(st$Murder), sd(st$Murder))
+plot(x,y, type = 'l')
+```
+###### state.x77 데이터셋의 각 변수간의 관계에 대해 분석하고 시각화하시오.
+```{r}
+# 시각화 : 파랄수록 높은 상관관계, 빨갈수록 낮은 상관관계
+install.packages('corrplot',
+                 repos = "http://cran.us.r-project.org")
+library(corrplot)
+
+mcor <- cor(st, method="pearson")
+corrplot(mcor, method = 'shade', shade.col = NA, t1.col='black', t1.srt=45)
+```
+###### state.x77 데이터셋을 대상으로 통계적 분석을 실행하고 통계적 분석을 통해 얻은 분석 결과를 기술하시오.
+```{r}
+#Murder와 Life Exp는 반비례 관계(-0.78)
+#Murder와 Illiteracy는 정비례 관계(0.70)
+```
+
+
+### 문제 4: 생활속의 통계학 연습문제 풀이
+
+###### 5장 - 14번
+```{r}
+## (2)
+mean <- function(x) {
+  return((x + 1)/2) }
+var <- function(x) {
+  return((x^2 - 1)/12)
+}
+
+mean(45)
+var(45)
+
+## (3)
+onedigit_p <- function(x) {
+  return(9/x)
+}
+
+onedigit_p(45)
+```
+###### 5장 - 16
+```{r}
+#1. 5번 모두 사고 날 확률
+dbinom(5, size=5, prob=0.55)
+
+#2. 꼭 3번 사고 날 확률
+dbinom(3, size=5, prob=0.55)
+
+#3. 적어도 1번 이상 사고 날 확률
+1-pbinom(0, size=5, prob=0.55)
+```
+###### 5장 - 25번
+```{r}
+x <- 2 / 3
+dgeom(4, x)
+```
+
+###### 6장 - 5번
+```{r}
+f_mean <- function(m,n) {
+    if (n >= 3) {
+        print(n/(n-2)) }
+    else {print('n이 3 미만입니다.')
+    }
+}
+
+f_var <- function(m,n) {
+    if (n >= 5) {
+        print((2*(n^2)*(m+n-2))/(m*((n-2)^2)*(n-4)))}
+    else {
+        print('n이 5 미만입니다.')
+    }
+}
+f_mean(8,6)
+f_var(8,6)
+
+```
+###### 6장 - 7번
+```{r}
+## 1. 근로자의 혈압 평균 124mmHg, 표준편차 8mmHg일 때,
+ # 혈압이 120 이하일 확률은 누적분포함수(pnorm) 이용
+ex1 <- pnorm(120, mean = 124, sd = 8)
+ex1
+
+ # 혈압이 142 이상일 확률은 1 - 누적분포함수 (pnorm)을 
+ex2 <- pnorm(142, mean = 124, sd = 8)
+1 - ex2
+
+# n <= mean <= m 사이의 값은 m - n
+ex3_1 <- pnorm(115, mean= 124, sd = 8)
+ex3_2 <- pnorm(136, mean= 124, sd = 8)
+
+ex3_2 - ex3_1
+```
+###### 6장 - 9번
+```{r}
+##1. 보험료로 지출의 평균, 표준편차 
+m <- (300+25)/2
+s <- sqrt((300-25)^2/12)
+
+
+##2. 150이상 지출할 확률
+punif(150, min = 25, max = 300, lower.tail = F)
+
+
+##3. 50이상 150이하 (= 150이하 - 50미만)
+
+#150이하
+b <- punif(150,min = 25, max = 300, lower.tail = T)
+
+#50미만(1-50이상)
+a <- 1-punif(50, min = 25, max = 300, lower.tail = F)
+b-a
+```
+
+
+### 문제 5: 생활속의 통계학 연습문제 풀이
+
+###### 7장 - 예제 6번
+```{r}
+cold <- c(4.23,4.26,4.26,4.24,4.27,4.23,4.19,4.27,4.21,4.25,4.23,4.29,4.30,4.24,4.20,4.24)
+var <- 0.000756
+n <- 16
+
+## (2)
+x_bar <- sum(cold)/n
+sigma <- 0
+
+for (x in cold) {
+  sigma <- sigma + ((x-x_bar)^2)
+  return(sigma)
+}
+
+bar_var <- sigma/15
+print(x_bar)
+print(bar_var)
+```
+###### 7장 - 17번
+```{r}
+# 1) 36명을 임의로 선정했을 때, 선수들의 평균 악력이 87~93 사이일 근사 확률
+# 정규 모집단으로부터의 표본평균에 대한 확률분포 문제다. 
+# 최대치와 최소치의 누적분포함수를 구한 뒤 빼주면 된다.
+u <- 90
+s <- 9
+x1 <- 87
+x2 <- 93
+n <- 36
+
+pnorm(x2, u, s / sqrt(n)) - pnorm(x1, u, s / sqrt(n))
+
+# 2) 64명의 선수를 임의로 선정했을 때, 1)의 확률
+# n만 수정하여 그대로 계산
+n <- 64
+
+pnorm(x2, u, s / sqrt(n)) - pnorm(x1, u, s / sqrt(n))
+
+```
+
+###### 8장 - 7번
+```{r}
+n <- 50
+u <- 95.1
+s <- sqrt(5.4)
+error <- qnorm(0.975, 0, 1)*s / sqrt(n)
+
+upper <- u+error;round(upper, s)
+lower <- u-error;round(lower, s)
+
+upper
+lower
+```
+###### 8장 - 9번
+```{r}
+l <- c(95,21,54,127,109,51,65,30,98,107,
+       68,99,69,101,73,82,100,63,45,76,
+       72,85,121,76,117,67,126,112,83,95)
+avg <- mean(l)
+avg
+s <- 25
+n <- length(l)
+
+low <- avg - 1.96 * s / sqrt(n)
+high <- avg + 1.96 * s / sqrt(n)
+
+low
+high
+
+#답이 잘 나왔는데 마크다운에서만 이상하게 나옵니다,, 양해 부탁드립니다
+```
+

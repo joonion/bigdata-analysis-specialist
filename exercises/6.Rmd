@@ -1,0 +1,335 @@
+---
+title: "<center>실습과제</center>"
+author: '<div style="text-align: right"> 6조(김민정,박종원,변지영,이소영,하동호) </div>'
+date: '<div style="text-align: right"> 2022-2-13 </div> '
+output: html_document
+---
+## 1번
+### 약수와 소수 구하기
+#### (1) n이 입력값으로 주어질 때 약수의 개수를 출력하는 함수를 완성하시오.
+```{r}
+div_count <- function(n){
+  return(sum(n%%(1:n)==0))
+}
+div_count(10)
+```
+
+#### (2) n이 입력값으로 주어질 때 소수의 개수를 출력하는 함수를 완성하시오.
+```{r}
+prime_count <- function(n){
+    return(sum(sapply(1:n, div_count) == 2))
+}
+prime_count(10)
+```
+
+## 2번
+### mtcars 데이터셋 분석
+#### mtcars 데이터셋의 구조를 확인하시오.
+```{r}
+str(mtcars)
+```
+#### mtcars 데이터셋의 요약정보를 확인하시오.
+```{r}
+summary(mtcars)
+```
+#### gear의 개수가 4인 자동차 모델의 모든 열 정보를 추출하시오.
+```{r}
+mtcars[mtcars$gear==4,]
+```
+#### gear의 개수가 4인 자동차 모델의 mpg, cyl, hp, wt 열 정보만 추출하시오.
+```{r}
+mtcars[mtcars$gear==4,c(1,2,4,6)]
+```
+#### mpg가 가장 낮은 자동차 모델의 모든 열 정보를 추출하시오.
+```{r}
+mtcars[mtcars$mpg==which.min(mtcars$mpg),]
+```
+#### mpg가 가장 낮은 자동차 모델의 mpg, cyl, hp, wt 열 정보만 추출하시오.
+```{r}
+mtcars[mtcars$mpg==which.min(mtcars$mpg), c(1,2,4,6)]
+```
+#### 연비(mpg) 의 평균, 분산, 표준편차를 구하시오.
+```{r}
+mean(mtcars$mpg)
+var(mtcars$mpg)
+sd(mtcars$mpg)
+```
+#### 연비(mpg) 가 중앙값 (median)보다 큰 모델들의 평균, 표준편차를 구하시오.
+```{r}
+mean(mtcars$mpg>median(mtcars$mpg))
+sd(mtcars$mpg>median(mtcars$mpg))
+```
+#### 연비(mpg) 의 히스토그램을 그리시오.
+```{r}
+hist(mtcars$mpg)
+```
+#### 기어(gear) 의 개수에 따른 빈도수를 나타내는 barplot을 그리시오.
+```{r}
+barplot(table(mtcars$gear))
+```
+#### mpg와 wt와의 관계를 나타내는 산점도 (scatter plot)를 그리시오.
+```{r}
+plot(mtcars$mpg,mtcars$wt)
+```
+
+## 3번
+### state.x77 데이터셋 분석
+
+#### state.x77 데이터셋의 각 변수값에 대해 조사하시오.
+```{r}
+?state.x77
+```
+
+#### state.x77 데이터셋의 데이터 프레임을 분석하시오.
+```{r}
+st <- as.data.frame(state.x77)
+st
+```
+#### state.x77 데이터셋의 각 변수별 기술적 통계량을 분석하시오.
+```{r}
+summary(st)
+```
+#### state.x77 데이터셋의 각 변수별 확률분포를 시각화하시오.
+```{r}
+hist(st$Population, breaks=30)
+hist(st$Income, breaks=30)
+hist(st$Illiteracy, breaks=30)
+hist(st$`Life Exp`, breaks=30)
+hist(st$Murder, breaks=30)
+hist(st$`HS Grad`, breaks=30)
+hist(st$Frost, breaks=30)
+hist(st$Area, breaks=30)
+```
+
+
+#### state.x77 데이터셋의 각 변수간의 관계에 대해 분석하고 시각화하시오.
+
+```{r}
+pairs(st)
+# 양, 음의 상관관계 색깔표시
+#install.packages('corrgram')
+library(corrgram)
+windows(width=7.0, height=7.0)
+corrgram(state.x77, 
+         main="Corrgram of US States Data",
+         order=TRUE, 
+         lower.panel=panel.shade, 
+         upper.panel=panel.pie, 
+         text.panel=panel.txt)
+mode = lm(Income ~ Population + Illiteracy+ `Life Exp`+ Murder + `HS Grad` + Frost + Area, data = st)
+mode1 <- lm(Income ~ Population , data = st)
+mode2 <- lm(Income ~ Illiteracy, data = st) #회귀계수가 -440.6  이므로 종속변수에 영향을 크게 미침
+mode3 <- lm(Income ~ `Life Exp`, data = st) #회귀계수가 155.7  이므로 종속변수에 영향을 크게 미침
+mode4 <- lm(Income ~ Murder, data = st)
+mode5 <- lm(Income ~ `HS Grad`, data = st)
+mode6 <- lm(Income ~ Frost, data = st)
+mode7 <- lm(Income ~ Area, data = st)
+```
+```{r}
+summary(mode2) 
+# 독립변수의 pvalue가 매우 작으므로 독립변수가 유의한 영향을 미친다고 볼 수있음
+# 회귀 모델의 pvalue도 작으므로 모델이 유의하다고 볼 수 있음
+```
+```{r}
+summary(mode3)
+# 독립변수의 pvalue가 작으므로 독립변수가 유의한 영향을 미친다고 볼 수있음
+# 회귀 모델의 pvalue도 작으므로 모델이 유의하다고 볼 수 있음
+```
+```{r}
+summary(mode)
+# 독립변수 중 Population, HS Grad의  pvalue가 0.5보다 작으므로 두 독립변수가 유의한 영향을 미친다고 볼 수있음
+# 회귀 모델의 pvalue는 매우 작으므로 모델이 유의하다고 볼 수 있음
+# 회귀 모델의 pvalue가 가장 작으므로 세가지 모델 중 통계적으로 가장 유의한 모델이라고 볼 수있음.
+```
+#### state.x77 데이터셋을 대상으로 통계적 분석을 실행하고 통계적 분석을 통해 얻은 분석 결과를 기술하시오. 예 ) 변수간 상관관계가 가장 높은 두 변수는 Murder 와 Illiteracy 이다.
+```{r}
+cor(st)
+#분석 결과
+#가장 상관관계가 높은 변수는 Murder,Life Exp 이고 음의상관관계를 가진다.
+#상관계수-0.78이다.
+```
+
+
+## 5장 (1번, 2번)
+### 1. 이산확률변수 X의 확률분포가 다음과 같다. 물음에 답하라.
+
+|X|-2|-1|0|1|2|
+|:------:|:---:|:---:|:---:|:---:|:---:|
+|P(X=x)|0.15|0.25||0.25|0.30|
+
+#### (1) P(X=0)을 구하라.
+```{r}
+x <- c(-2,-1,0,1,2)
+p <- c(0.15, 0.25,0,0.25,0.30)
+p[3] = 1-sum(p)
+p[3]
+```
+
+#### (2) 평균 $\mu$와 분산 $\sigma^2$을 구하라.
+```{r}
+#평균
+mean = sum(x *p)
+mean
+#분산
+var=sum(x*x*p)-mean^2
+var
+```
+
+### 2. X ~ B(8,0.45)에 대하여 다음을 구하라.
+#### (1) P(X=4)
+```{r}
+dbinom(4, 8, 0.45)
+```
+#### (2) P(X $\neq$ 3)
+```{r}
+1-dbinom(3, 8, 0.45)
+```
+#### (3) P(X $\leq$ 5)
+```{r}
+pbinom(5, 8, 0.45, lower.tail = T)
+```
+#### (4) P(X $\geq$ 6)
+```{r}
+pbinom(6, 8, 0.45, lower.tail = F) + dbinom(6, 8, 0.45)
+```
+#### (5) 평균 $\mu$
+```{r}
+mean <- 8 * 0.45
+mean
+```
+#### (6) 분산 $\sigma$
+```{r}
+var = 8*0.45*(1-0.45)
+var
+```
+#### (7) P($\mu$ -  $\sigma$ $\leq$ X $\leq$ $\mu$ + $\sigma$)
+```{r}
+pbinom(mean+sqrt(var), 8, 0.45) - pbinom(mean-sqrt(var), 8, 0.45)
+```
+#### (8) P($\mu$ - 2 $\sigma$ $\leq$ X $\leq$ $\mu$ + 2$\sigma$)
+```{r}
+pbinom(mean+2*sqrt(var), 8, 0.45) - pbinom(mean-2*sqrt(var), 8, 0.45)
+```
+
+
+## 6장 (1번, 2번)
+### 1. 표준정규확률변수 Z에 대하여 다음을 구하라.
+
+#### (1) P(Z $\geq$ 2.05)
+```{r}
+1-pnorm(2.05, 0, 1, lower.tail = T)
+```
+#### (2) P(Z < 1.11)
+```{r}
+pnorm(1.11, 0, 1, lower.tail = T)
+```
+#### (3) P(Z > -1.27)
+```{r}
+pnorm(-1.27, 0, 1, lower.tail = F)
+```
+#### (4) P(-1.02 $\leq$ Z $\leq$ 1.02)
+```{r}
+pnorm(1.02, 0, 1) - pnorm(-1.02, 0, 1)
+```
+
+
+### 2. X ~ N(5,4)일 때, 다음을 구하라.
+#### (1) P(X $\geq$ 4.5)
+```{r}
+pnorm(4.5, 5, 2, lower.tail = F)
+```
+#### (2) P(X < 6.5)
+```{r}
+pnorm(6.5, 5, 2)
+```
+#### (3) P(X $\leq$ 2.5)
+```{r}
+pnorm(2.5, 5, 2)
+```
+#### (4) P(3 $\leq$ X $\leq$ 7)
+```{r}
+pnorm(7, 5, 2) - pnorm(3, 5, 2)
+```
+
+
+## 7장 (3번, 4번)
+### 1. $\mu$ = 50이고 모표준편차가 다음과 같은 모집단으로부터 크기 25인 확률표본을 선정할 때, 표본평균이 49와 52 사이일 확률을 구하라.
+
+#### (1) $\sigma$ = 4
+```{r}
+pnorm(52, 50, 4/5) - pnorm(49, 50, 4/5)
+```
+#### (2) $\sigma$ = 9
+```{r}
+pnorm(52, 50, 9/5) - pnorm(49, 50, 9/5)
+
+```
+#### (3) $\sigma$ = 12
+```{r}
+pnorm(52, 50, 12/5) - pnorm(49, 50, 12/5)
+```
+
+
+### 2. $\mu$ = 50이고 모표준편차 $\sigma$인 정규모집단으로부터 다음과 같은 크기 n인 확률표본을 선정할 때, 표본평균이 49와 51 사이일 확률을 구하라.
+
+#### (1) n = 16
+```{r}
+pnorm(51, 50, 5/4) - pnorm(49, 50, 5/4)
+```
+#### (2) n = 49
+```{r}
+pnorm(51, 50, 5/7) - pnorm(49, 50, 5/7)
+```
+#### (3) n = 64
+```{r}
+pnorm(51, 50, 5/8) - pnorm(49, 50, 5/8)
+```
+
+
+
+
+## 8장 (1번, 2번)
+
+### 1. 모분산이 다음과 같은 정규모집단의 모평균에 대한 95% 신뢰도를 갖는 구간을 추정하기 위하여 크기가 50인 표본을 선정한다. 이때 오차한계를 구하라.
+
+#### (1) $\sigma^2$ = 5
+```{r}
+1.96*sqrt(5/50)
+```
+#### (2) $\sigma^2$ = 15
+```{r}
+1.96*sqrt(15/50)
+```
+#### (3) $\sigma^2$ = 25
+```{r}
+1.96*sqrt(25/50)
+```
+#### (4) $\sigma^2$ = 35
+```{r}
+1.96*sqrt(35/50)
+```
+
+
+
+
+### 2. 모분산 4인 정규모집단의 모평균에 대한 95% 신뢰도를 갖는 구간을 추정하기 위하여 다음과 같은 크기의 표본을 선정한다. 이때 오차한계를 구하라.
+
+#### (1) n = 50
+```{r}
+1.96*sqrt(4/50)
+```
+#### (2) n = 100
+```{r}
+1.96*sqrt(4/100)
+```
+#### (3) n = 200
+```{r}
+1.96*sqrt(4/200)
+```
+#### (4) n = 500
+```{r}
+1.96*sqrt(4/500)
+```
+
+
+

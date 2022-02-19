@@ -1,0 +1,72 @@
+# 2. dataset mtcars 
+
+### import packages
+```{r}
+#install.packages("data.table")
+library(data.table)
+
+prob2 = copy(mtcars)
+prob2
+```
+
+## 2-1. mtcars 데이터셋의 구조를 확인하시오. str(mtcars)
+```{r}
+str(prob2)
+```
+
+## 2-2. mtcars 데이터셋의 요약정보를 확인하시오. summary(mtcars)
+```{r}
+summary(prob2)
+```
+
+## 2-3. gear의 개수가 4인 자동차 모델의 모든 열 정보를 추출하시오.
+```{r}
+prob2[which(prob2$gear == 4),]
+```
+
+## 2-4.  gear의 개수가 4인 자동차 모델의 mpg, cyl, hp, wt 열 정보만 추출하시오.
+```{r}
+prob2[which(prob2$gear == 4),c('mpg','cyl','hp','wt')]
+```
+
+## 2-5. mpg가 가장 낮은 자동차 모델의 모든 열 정보를 추출하시오.
+```{r}
+prob2[which.min(prob2$mpg),]
+```
+
+## 2-6. mpg가 가장 낮은 자동차 모델의 mpg, cyl, hp, wt 열 정보만 추출하시오.
+```{r}
+prob2[which.min(prob2$mpg),c('mpg','cyl','hp','wt')]
+```
+
+## 2-7. 연비(mpg)의 평균, 분산, 표준편차를 구하시오.
+```{r}
+cat('평균 : \t\t', mean(prob2$mpg), '\n')
+cat('분산 : \t\t', var(prob2$mpg), '\n')
+cat('표준편차 : \t', sd(prob2$mpg))
+```
+
+## 2-8. 연비(mpg)가 중앙값(median)보다 큰 모델들의 평균, 표준편차를 구하시오.
+```{r}
+pmg_median = median(prob2$mpg)
+mpg_ltm = prob2[which(prob2$mpg > pmg_median),c('mpg')]
+
+cat('평균 : \t\t', mean(mpg_ltm), '\n')
+cat('표준편차 : \t', sd(mpg_ltm),'\n')
+```
+
+## 2-9. 연비(mpg)의 히스토그램을 그리시오.
+```{r}
+hist(prob2$mpg,breaks=sqrt(length(prob2$mpg)))
+```
+
+## 2-10. 기어(gear)의 개수에 따른 빈도수를 나타내는 barplot을 그리시오.
+```{r}
+barplot(table(prob2$gear))
+```
+
+## 2-11. mpg와 wt와의 관계를 나타내는 산점도(scatter plot)를 그리시오.
+```{r}
+plot(formula=prob2$mpg~prob2$wt,data = cbind(prob2$mpg,prob2$wt),col=c('blue'),pch=19,xlab='weight',ylab='mpg',frame=F,xlim=c(1,6),ylim=c(10,35))
+grid(nx=NULL,ny=NULL,lty=2,col='gray',lwd=2)
+```

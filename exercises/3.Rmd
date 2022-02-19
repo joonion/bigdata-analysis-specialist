@@ -1,0 +1,354 @@
+---
+title: "3조 Team Project"
+author: "김경일, 손상우, 주현우, 임낙현, 정지현"
+date: "2022.02.13 일요일"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+
+#### **문제1. 약수와 소수 구하기**
+
+1-1) n이 입력값으로 주어질 때 약수의 개수를 출력하는 함수를 완성하시오
+
+```{r}
+div_count <- function(n) sum(n%%(1:n)==0)
+div_count(100)
+```
+
+1-2) n이 입력값으로 주어질 때 소수의 개수를 출력하는 함수를 완성하시오
+
+```{r}
+prime_count <- function(n) sum(sapply(1:n,div_count)==2)
+prime_count(100)
+```
+
+#### **문제2. mtcars 데이터셋**
+
+2-1) mtcars 데이터셋의 구조를 확인하시오.
+
+```{r}
+str(mtcars)
+```
+
+2-2) mtcars 데이터셋의 요약정보를 확인하시오.
+
+```{r}
+summary(mtcars)
+```
+
+2-3) gear의 개수가 4인 자동차 모델의 모든 열 정보를 추출하시오.
+
+```{r}
+mtcars[mtcars$gear==4,]
+```
+
+2-4) gear의 개수가 4인 자동차 모델의 mpg, cyl, hp, wt 열 정보만 추출하시오.
+
+```{r}
+mtcars[mtcars$gear==4,c('mpg','cyl','hp','wt')]
+```
+
+2-5) mpg가 가장 낮은 자동차 모델의 모든 열 정보를 추출하시오.
+
+```{r}
+mtcars[mtcars$mpg==min(mtcars$mpg),]
+```
+
+2-6) mpg가 가장 낮은 자동차 모델의 mpg, cyl, hp, wt 열 정보만 추출하시오.
+
+```{r}
+mtcars[mtcars$mpg==min(mtcars$mpg),c('mpg','cyl','hp','wt')]
+```
+
+2-7) 연비(mpg)의 평균, 분산, 표준편차를 구하시오.
+
+```{r}
+mean(mtcars$mpg) # mpg의 평균
+var(mtcars$mpg) # mpg의 분산
+sd(mtcars$mpg) # mpg의 표준편차
+```
+
+2-8) 연비(mpg)가 중앙값(median)보다 큰 모델들의 평균, 표준편차를 구하시오.
+
+```{r}
+mean(subset(mtcars,mtcars$mpg>median(mtcars$mpg))$mpg) # 연비가 중앙값 보다 큰 모델들의 평균
+sd(subset(mtcars,mtcars$mpg>median(mtcars$mpg))$mpg) # 연비가 중앙값 보다 큰 모델들의 표준편차
+```
+
+2-9) 연비(mpg)의 히스토그램을 그리시오.
+
+```{r}
+hist(mtcars$mpg,main='연비별 모델 수',col="violet",border="white",xlab="연비",ylab='모델 수')
+```
+
+2-10) 기어(gear)의 개수에 따른 빈도수를 나타내는 barplot을 그리시오.
+
+```{r}
+barplot(table(mtcars$gear),main='기어갯수 별 모델 수',col="lightblue",xlab="기어 수",ylab="모델 수")
+```
+
+2-11) mpg와 wt와의 관계를 나타내는 산점도(scatter plot)를 그리시오.
+
+```{r}
+plot(x=mtcars$mpg,y=mtcars$wt,main='연비와 공차중량의 관계',col='red',xlab='연비',ylab='공차중량')
+```
+
+#### **문제3. state.x77 데이터셋**
+
+3-1) state.x77 데이터셋의 각 변수값에 대해 조사하시오.
+
+```{r}
+?state.x77
+```
+
+3-2) state.x77 데이터셋의 데이터 프레임을 분석하시오.
+
+```{r}
+st <- as.data.frame(state.x77)
+str(st)
+summary(st)
+```
+
+3-3) state.x77 데이터셋의 각 변수별 기술적 통계량을 분석하시오.
+
+```{r}
+summary(st$Population)
+summary(st$Income)
+summary(st$Illiteracy)
+summary(st$`Life Exp`)
+summary(st$Murder)
+summary(st$`HS Grad`)
+summary(st$Area)
+```
+
+3-4) state.x77 데이터셋의 각 변수별 확률분포를 시각화하시오.
+
+```{r}
+# Population 확률분포 시각화
+x1 <- sort(st$Population)
+y1 <- dnorm(x1,mean(x1),sd(x1))
+plot(x1,y1,type='l')
+
+# HS Grad 확률분포 시각화
+x2 <- sort(st$`HS Grad`)
+y2 <- dnorm(x2, mean(x2), sd(x2))
+plot(x2, y2, type='l')
+
+# Income 확률분포 시각화
+x3 <- sort(st$Income)
+y3 <- dnorm(x3, mean(x3), sd(x3))
+plot(x3, y3, type='l')
+
+# Illiteracy 확률분포 시각화
+x4 <- sort(st$Illiteracy)
+y4 <- dnorm(x4, mean(x4), sd(x4))
+plot(x4, y4, type='l')
+
+# Life Exp 확률분포 시각화
+x5 <- sort(st$`Life Exp`)
+y5 <- dnorm(x5, mean(x5), sd(x5))
+plot(x5, y5, type='l')
+
+# Murder 확률분포 시각화
+x6 <- sort(st$Murder)
+y6 <- dnorm(x6, mean(x6), sd(x6))
+plot(x6, y6, type='l')
+
+# Frost 확률분포 시각화
+x7 <- sort(st$Frost)
+y7 <- dnorm(x7, mean(x7), sd(x7))
+plot(x7, y7, type='l')
+
+# Area 확률분포 시각화
+x8 <- sort(st$Area)
+y8 <- dnorm(x8, mean(x8), sd(x8))
+plot(x8, y8, type='l')
+```
+
+3-5) state.x77 데이터셋의 각 변수간의 관계에 대해 분석하고 시각화하시오.
+
+```{r}
+plot(st)
+```
+
+3-6) state.x77 데이터셋을 대상으로 통계적 분석을 실행하고
+통계적 분석을 통해 얻은 분석 결과를 기술하시오
+예)변수간 상관관계가 가장 높은 두 변수는 Murder 와 Illiteracy 이다
+
+```{r}
+#install.packages("corrplot")
+library(corrplot)
+corrplot(cor(st), method="number")
+```
+
+#### **문제4. 생활속에 통계학 확률분포 문제 풀이**
+
+5단원.
+
+13) 어떤 자동차 보험회사가 자사 보험 가입 운전자의 성향이 연간 0.6의 확률을 가지고 추돌사고를 일으킨다는 정보를 가지고 있다. 이 보험회사의 자동차보험에 가입한 10명의 피보험자를 무작위로 선정할 경우, 다음을 구하라.
+
+13-1) 추돌사고를 일으킨 피보험자 수에 대한 확률함수.
+
+```{r}
+aig <- function(n) dbinom(n,10,0.6)
+```
+
+13-2) 추돌사고를 일으킨 피보험자 수의 평균과 분산.
+
+```{r}
+mean13 <- 10*0.6
+mean13 # 평균
+sd13 <- 10*0.6*0.4
+sd13 # 분산
+```
+
+13-3) 꼭 두 명의 피보험자가 사고를 낼 확률.
+
+```{r}
+aig(2)
+```
+
+13-4) 적어도 4명 이상의 피보험자가 사고를 낼 확률.
+
+```{r}
+1-pbinom(3,10,0.6) # 1에서 3명까지의 피보험자가 사고를 낼 확률을 빼서 구했습니다.
+```
+
+16) 치명적인 자동차 사고의 55%가 음주운전에 의한 것이라는 보고가 있다. 앞으로 5건의 치명적인 자동차 사고가 날 때, 음주운전에 의하여 사고가 발생한 횟수 X에 대하여 다음 확률을 구하라.
+
+16-1) 다섯 번 모두 사고가 날 확률.
+
+```{r}
+car_crash <- function(n) dbinom(n,5,0.55) #16번 문제의 확률함수입니다.
+car_crash(5)
+```
+
+16-2) 꼭 3번 사고가 날 확률.
+
+```{r}
+car_crash(3)
+```
+
+16-3) 적어도 1번 이상 사고가 날 확률.
+
+```{r}
+1-car_crash(0)
+```
+
+
+6단원.
+
+2) X~N(5,4)일 때, 다음을 구하라.
+
+2-1) P(X>=4.5)
+
+```{r}
+pnorm(4.5,5,2,F)
+```
+
+2-2) P(X<6.5)
+
+```{r}
+pnorm(6.5,5,2)
+```
+
+2-3) P(X<=2.5)
+
+```{r}
+pnorm(2.5,5,2)
+```
+
+2-4) P(3<=X<=7)
+
+```{r}
+pnorm(7,5,2)-pnorm(3,5,2)
+```
+
+19) 집에서 학교까지 걸어서 가는 시간이 평균 10분이고 표준편차는 1.5분인 정규분포를 따른다고 하자. 이때 집에서 학교까지 걸어서 가는 데 걸리는 시간에 대하여 다음을 구하라.
+
+19-1) 집에서 출발하여 걸어서 학교까지 가는 데 12분 이상 걸릴 확률.
+
+```{r}
+pnorm(12,10,1.5,F)
+```
+
+19-2) 집에서 출발하여 걸어서 9분 안에 학교에 도착할 확률.
+
+```{r}
+pnorm(9,10,1.5)
+```
+
+19-3) 집에서 학교까지 걸어서 7분 이상 걸리지만 11분 안에 도착할 확률.
+
+```{r}
+pnorm(11,10,1.5)-pnorm(7,10,1.5)
+```
+
+
+7단원.
+
+3) M=50 이고 모표준편차가 다음과 같은 모집단으로부터 크기 25인 확률표본을 선정할 때, 표본 평균이 49와 52 사이일 확률을 구하라.
+
+3-1) 모표준편차=4
+
+```{r}
+#모표준편차가 주어졌을 때 표본 평균이 49와 52 사이일 확률을 구해주는 함수입니다.
+mean_guess <- function(x) pnorm(2/(x/5),0,1)-pnorm(-1/(x/5),0,1)
+
+mean_guess(4)
+```
+
+3-2) 모표준편차=9
+
+```{r}
+mean_guess(9)
+```
+
+3-3) 모표준편차=12
+
+```{r}
+mean_guess(12)
+```
+
+21) 2014년 7월 26일자 동아일보에 '전년도 해외여행자 수가 1484만 6천 명으로 역대 최고를 기록했다.'라는 기사가 실렸다. 이는 전 국민의 약 30%에 해당하는 비율이다. 2015년도에 해외여행을 계획하는 사람의 비율을 조사하기 위하여, 500명을 임의로 선정하여 조사하였다. 물음에 답하라.
+
+21-1) 표본비율의 근사 확률분포를 구하라.
+```{r}
+phat21 <- 0.3 # 모비율입니다.
+p_sd21 <- sqrt(0.3*(1-0.3)/500) # 모비율로 구한 표p본비율이 따르는 확률분포의 표준편차 입니다.
+#표본비율의 근사 확률분포 : N(phat21,p_sd21)
+```
+
+21-2) 표본비율과 모비율의 차가 0.05보다 작을 확률을 구하라.
+
+```{r}
+pnorm((0.35-phat21)/p_sd21,0,1)-pnorm((0.25-phat21)/p_sd21,0,1)
+```
+
+21-3) 표본비율이 p0보다 클 확률이 0.025인 p0을 구하라.
+
+```{r}
+p0 <- 1.96*p_sd21+phat21
+p0
+```
+
+
+8단원.
+
+15) 2014년에 한국소비자보호원은 서울 지역 자가 운전자 1000명을 대상으로 설문 조사를 실시한 결과, 가짜 석유 또는 정량 미달 주유를 의심한 경험이 있는 소비자가 79.3%에 이르는 것으로 나타났다고 밝혔다. 이와 같은 경험을 가진 서울 지역 자가 운전자의 비율에 대한 90% 신뢰구간을 구하라.
+
+```{r}
+merror21 <- 1.645*sqrt(0.793*(1-0.793)/1000) # 오차한계
+0.793-merror21 #신뢰구간의 하한
+0.793+merror21 #신뢰구간의 상한
+#서울 지역 자가 운전자의 비율에 대한 90% 신뢰구간 : (0.793-merror21, 0.793+merror21)
+```
+
+20) 한강의 물속에 포함된 염분의 평균 농도를 구하고자 한다. 95% 신뢰구간의 길이가 0.4를 넘지 않도록 하기 위한 최소한의 표본의 크기를 구하라(단, 염분의 농도에 대한 표준편차는 3인 것으로 알려져 있다고 한다).
+
+```{r}
+((2*1.96*3)/0.4)^2 #신뢰구간의 길이가 0.4를 넘지 않게하는 최소한의 표본의 크기
+```
+
